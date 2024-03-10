@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice and Billing System</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    #invoice {
+        width: 80%;
+        margin: 20px auto;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .total {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div id="invoice">
+    <h2>Invoice</h2>
+    <table id="invoiceTable">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="invoiceBody">
+            <!-- Dynamically populated content will go here -->
+        </tbody>
+    </table>
+    <div id="total" class="total">Total: $0</div>
+    <button onclick="addItem()">Add Item</button>
+    <button onclick="calculateTotal()">Calculate Total</button>
+</div>
+
+<script>
+    // Function to add a new row for item entry
+    function addItem() {
+        var table = document.getElementById("invoiceBody");
+        var newRow = table.insertRow();
+        newRow.innerHTML = `<td contenteditable="true">New Item</td>
+                            <td contenteditable="true">1</td>
+                            <td contenteditable="true">0</td>
+                            <td class="itemTotal">0</td>`;
+    }
+
+    // Function to calculate the total amount
+    function calculateTotal() {
+        var table = document.getElementById("invoiceTable");
+        var rows = table.rows;
+        var total = 0;
+
+        for (var i = 1; i < rows.length; i++) {
+            var quantity = parseInt(rows[i].cells[1].innerText);
+            var price = parseFloat(rows[i].cells[2].innerText);
+            var itemTotal = quantity * price;
+            total += itemTotal;
+            rows[i].cells[3].innerText = itemTotal.toFixed(2);
+        }
+
+        document.getElementById("total").innerText = "Total: $" + total.toFixed(2);
+    }
+</script>
+
+</body>
+</html>

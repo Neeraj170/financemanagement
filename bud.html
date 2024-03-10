@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budgeting and Planning</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        #expenseForm {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Budgeting and Planning</h1>
+    </header>
+    <div class="container">
+        <form id="expenseForm">
+            <input type="text" id="description" placeholder="Description">
+            <input type="number" id="amount" placeholder="Amount">
+            <button type="button" onclick="addExpense()">Add Expense</button>
+        </form>
+        <table id="expenseTable">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Expenses will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function addExpense() {
+            var description = document.getElementById("description").value;
+            var amount = parseFloat(document.getElementById("amount").value);
+
+            if (description.trim() === "" || isNaN(amount) || amount <= 0) {
+                alert("Please enter valid description and amount.");
+                return;
+            }
+
+            var tbody = document.querySelector("#expenseTable tbody");
+            var newRow = document.createElement("tr");
+            newRow.innerHTML = `
+                <td>${description}</td>
+                <td>${amount.toFixed(2)}</td>
+            `;
+            tbody.appendChild(newRow);
+
+            // Clear input fields
+            document.getElementById("description").value = "";
+            document.getElementById("amount").value = "";
+
+            // Store data in localStorage
+            var expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            expenses.push({ description: description, amount: amount });
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+        }
+
+        // Load expenses from localStorage on page load
+        window.onload = function() {
+            var expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            var tbody = document.querySelector("#expenseTable tbody");
+            expenses.forEach(function(expense) {
+                var newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${expense.description}</td>
+                    <td>${expense.amount.toFixed(2)}</td>
+                `;
+                tbody.appendChild(newRow);
+            });
+        };
+    </script>
+</body>
+</html>

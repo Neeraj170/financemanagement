@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses and Tracking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"], input[type="submit"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 1;
+            margin-right: 10px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expenses and Tracking</h1>
+        <form id="expense-form">
+            <input type="text" id="expense-name" placeholder="Expense Name" required>
+            <input type="number" id="expense-amount" placeholder="Amount ($)" required>
+            <input type="submit" value="Add Expense">
+        </form>
+        <ul id="expense-list"></ul>
+    </div>
+
+    <script>
+        // Retrieve expenses from localStorage on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            const expenseList = document.getElementById('expense-list');
+            
+            // Display existing expenses
+            expenses.forEach(function (expense, index) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${expense.name}: $${expense.amount}
+                    <button class="delete-btn" onclick="deleteExpense(${index})">Delete</button>
+                `;
+                expenseList.appendChild(li);
+            });
+        });
+
+        // Add expense
+        document.getElementById('expense-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('expense-name').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+
+            if (name.trim() === '' || isNaN(amount) || amount <= 0) {
+                alert('Please enter valid expense details.');
+                return;
+            }
+
+            const expense = {
+                name: name,
+                amount: amount
+            };
+
+            const expenseList = document.getElementById('expense-list');
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${expense.name}: $${expense.amount}
+                <button class="delete-btn" onclick="deleteExpense(${expenses.length})">Delete</button>
+            `;
+            expenseList.appendChild(li);
+
+            // Save expense to localStorage
+            const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            expenses.push(expense);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+
+            // Clear input fields
+            document.getElementById('expense-name').value = '';
+            document.getElementById('expense-amount').value = '';
+        });
+
+        // Delete expense
+        function deleteExpense(index) {
+            const expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+            expenses.splice(index, 1);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
+
+            // Refresh expense list
+            const expenseList = document.getElementById('expense-list');
+            expenseList.innerHTML = '';
+            expenses.forEach(function (expense, index) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${expense.name}: $${expense.amount}
+                    <button class="delete-btn" onclick="deleteExpense(${index})">Delete</button>
+                `;
+                expenseList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
